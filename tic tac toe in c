@@ -1,0 +1,104 @@
+#include <stdio.h>
+
+char board[3][3]; // Tic-tac-toe board
+char player = 'X'; // Current player
+
+// Function to initialize the board
+void initBoard() {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            board[i][j] = ' ';
+        }
+    }
+}
+
+// Function to print the current board state
+void printBoard() {
+    printf("\n");
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            printf(" %c ", board[i][j]);
+            if (j < 2) printf("|");
+        }
+        printf("\n");
+        if (i < 2) printf("---|---|---\n");
+    }
+    printf("\n");
+}
+
+// Function to check if the move is valid
+int isValidMove(int row, int col) {
+    if (row < 0 || row > 2 || col < 0 || col > 2 || board[row][col] != ' ') {
+        return 0; // Invalid move
+    }
+    return 1; // Valid move
+}
+
+// Function to check if there's a winner
+char checkWinner() {
+    // Check rows and columns
+    for (int i = 0; i < 3; i++) {
+        if (board[i][0] == player && board[i][1] == player && board[i][2] == player)
+            return player;
+        if (board[0][i] == player && board[1][i] == player && board[2][i] == player)
+            return player;
+    }
+    
+    // Check diagonals
+    if (board[0][0] == player && board[1][1] == player && board[2][2] == player)
+        return player;
+    if (board[0][2] == player && board[1][1] == player && board[2][0] == player)
+        return player;
+    
+    // Check for a tie (no empty cells left)
+    int tie = 1;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (board[i][j] == ' ') {
+                tie = 0; // Still space available
+                break;
+            }
+        }
+    }
+    if (tie) return 'T'; // It's a tie
+
+    return ' '; // No winner yet
+}
+
+// Function to toggle between players
+void togglePlayer() {
+    player = (player == 'X') ? 'O' : 'X';
+}
+
+int main() {
+    int row, col;
+    char winner = ' ';
+    
+    initBoard();
+    
+    while (winner == ' ') {
+        printBoard();
+        printf("Player %c, enter your move (row and column): ", player);
+        scanf("%d %d", &row, &col);
+
+        if (isValidMove(row - 1, col - 1)) {
+            board[row - 1][col - 1] = player;
+            winner = checkWinner();
+            if (winner == ' ') {
+                togglePlayer();
+            }
+        } else {
+            printf("Invalid move, try again.\n");
+        }
+    }
+
+    printBoard();
+
+    if (winner == 'T') {
+        printf("It's a tie!\n");
+    } else {
+        printf("Player %c wins!\n", winner);
+    }
+
+    return 0;
+}
